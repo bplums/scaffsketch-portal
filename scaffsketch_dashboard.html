@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScaffSketch — Scaffold Design Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+:root {
+  --navy:#1E2A38;--navy2:#2a3a4d;--navy3:#141d27;
+  --orange:#F97316;--orange2:#fb923c;
+  --white:#FAFAFA;--slate:#64748B;--slate2:#94a3b8;
+  --bg:#f0f4f8;--bg2:#e8edf3;
+  --green:#22C55E;--amber:#F59E0B;--red:#EF4444;
+  --border:rgba(30,42,56,0.12);
+  --sh:0 1px 3px rgba(30,42,56,0.1),0 1px 2px rgba(30,42,56,0.06);
+  --shm:0 4px 6px rgba(30,42,56,0.08),0 2px 4px rgba(30,42,56,0.06);
+  --shl:0 10px 15px rgba(30,42,56,0.1),0 4px 6px rgba(30,42,56,0.05);
+  --r:8px;--rl:12px;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--navy);font-size:14px;line-height:1.5;overflow:hidden;height:100vh;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* APP SHELL */
+.app{display:flex;height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--navy);display:flex;flex-direction:column;height:100vh;}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo-mark{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--white);letter-spacing:.5px;line-height:1;}
+.logo-mark span{color:var(--orange);}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-sect{padding:16px 12px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);font-weight:600;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;color:rgba(255,255,255,0.65);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;border-left:2px solid transparent;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:var(--white);}
+.nav-item.active{background:rgba(249,115,22,0.12);color:var(--white);border-left-color:var(--orange);}
+.nav-icon{width:16px;text-align:center;font-size:13px;}
+.nav-badge{margin-left:auto;background:var(--orange);color:white;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.08);}
+.user-block{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r);cursor:pointer;transition:background .15s;}
+.user-block:hover{background:rgba(255,255,255,0.06);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:13px;color:white;flex-shrink:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--white);}
+.user-role{font-size:10px;color:rgba(255,255,255,0.4);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--sh);}
+.topbar-title{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--navy);flex:1;letter-spacing:.3px;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:6px 14px;width:220px;}
+.tb-search input{border:none;background:transparent;font-family:var(--fb);font-size:13px;color:var(--navy);outline:none;flex:1;}
+.tb-search input::placeholder{color:var(--slate2);}
+.tb-clock{font-family:var(--fd);font-size:15px;font-weight:600;color:var(--navy);letter-spacing:1px;background:var(--bg);padding:5px 12px;border-radius:20px;border:1px solid var(--border);}
+.tb-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;font-size:16px;}
+.tb-btn:hover{background:var(--bg);}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--orange);border-radius:50%;border:2px solid var(--white);}
+
+/* PAGES */
+.page{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.page.active{display:flex;}
+.page-scroll{flex:1;overflow-y:auto;padding:20px;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;box-shadow:var(--sh);}
+.card-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--navy);letter-spacing:.3px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+
+/* STAT CARDS */
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--orange);}
+.stat-card.blue::before{background:#3b82f6;}.stat-card.green::before{background:var(--green);}.stat-card.amber::before{background:var(--amber);}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;}
+.stat-val{font-family:var(--fd);font-size:36px;font-weight:700;color:var(--navy);line-height:1;margin:6px 0 4px;}
+.stat-sub{font-size:12px;color:var(--slate);}
+
+/* GRIDS */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--slate);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg);}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.tbl tr:hover td{background:#f8fafc;}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px;}
+.c-sub{background:#eff6ff;color:#1d4ed8;}.c-rev{background:#fef3c7;color:#b45309;}
+.c-est{background:#f3e8ff;color:#7c3aed;}.c-qr{background:#dcfce7;color:#15803d;}
+.c-app{background:#dcfce7;color:#15803d;}.c-des{background:#fff7ed;color:#c2410c;}
+.c-com{background:#f0fdf4;color:#166534;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.btn-p{background:var(--orange);color:white;}.btn-p:hover{background:var(--orange2);}
+.btn-s{background:var(--bg);color:var(--navy);border:1px solid var(--border);}.btn-s:hover{background:var(--bg2);}
+.btn-g{background:transparent;color:var(--slate);border:1px solid var(--border);}.btn-g:hover{background:var(--bg);color:var(--navy);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.tab:hover{color:var(--navy);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);font-weight:600;}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--navy);}
+
+/* ROLE CHIPS */
+.role{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;}
+.r-admin{background:rgba(30,42,56,0.1);color:var(--navy);}
+.r-des{background:rgba(249,115,22,0.12);color:#c2410c;}
+.r-cli{background:rgba(100,116,139,0.12);color:var(--slate);}
+
+/* TIMER */
+.timer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.timer-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.timer-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:6px;}
+.timer-val{font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:2px;line-height:1;}
+.tv-green{color:var(--green);}.tv-amber{color:var(--amber);}.tv-red{color:var(--red);}.tv-off{color:var(--slate2);}
+.timer-sub{font-size:10px;color:var(--slate);margin-top:4px;}
+
+/* FORM */
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--fb);font-size:13px;color:var(--navy);background:var(--white);outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,0.1);}
+.fsel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M1 4l5 5 5-5' fill='none' stroke='%2364748B' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+
+/* NOTES */
+.note{padding:14px;border-radius:var(--rl);border:1px solid var(--border);margin-bottom:10px;background:var(--white);}
+.note.internal{background:#fffbeb;border-color:#fde68a;}
+.note-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.note-name{font-weight:600;font-size:13px;}
+.note-time{font-size:11px;color:var(--slate);margin-left:auto;}
+.note-body{font-size:13px;color:var(--navy);line-height:1.6;}
+
+/* ACTIVITY */
+.act-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.act-time{color:var(--slate);font-size:11px;margin-top:2px;}
+
+/* COMPLIANCE BANNER */
+.comp-banner{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#14532d;}
+
+/* YARD */
+.yard-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px;text-align:center;}
+.yard-val{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--navy);}
+.yard-lbl{font-size:11px;color:var(--slate);margin-top:2px;}
+.prog{height:4px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:var(--orange);transition:width .3s;}
+.pf-g{background:var(--green);}.pf-r{background:var(--red);}
+.inv-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:12px;font-size:13px;}
+.inv-row:hover{background:#f8fafc;}
+.inv-row.hdr{background:var(--bg);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--slate);}
+.yb{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;}
+.yb-g{background:#dcfce7;color:#15803d;}.yb-a{background:#fef3c7;color:#b45309;}.yb-r{background:#fee2e2;color:#b91c1c;}
+
+/* DESIGNER */
+.designer{display:flex;height:calc(100vh - 52px);overflow:hidden;}
+.d-left{width:260px;min-width:260px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.d-left-hdr{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);}
+.sys-tabs{display:flex;flex-wrap:wrap;gap:4px;}
+.sys-tab{padding:4px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;border:1px solid var(--border);background:var(--white);color:var(--slate);transition:all .15s;}
+.sys-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.sys-tab:hover:not(.active){border-color:var(--slate);color:var(--navy);}
+.palette{flex:1;overflow-y:auto;padding:8px;}
+.pal-grp-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;padding:6px 8px 4px;}
+.pal-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--r);cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.pal-item:hover{background:var(--bg);border-color:var(--border);}
+.pal-item.placing{background:#fff7ed;border-color:var(--orange);}
+.pal-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.d-std{background:var(--navy);}.d-led{background:var(--slate);}.d-brd{background:#C4A265;}
+.d-brc{background:var(--orange);}.d-saf{background:var(--green);}
+.pal-name{font-size:12px;font-weight:500;color:var(--navy);flex:1;}
+.pal-dim{font-size:10px;color:var(--slate);}
+
+/* VIEWPORT */
+.vp-wrap{flex:1;position:relative;background:#e8ecf0;overflow:hidden;}
+.vp-toolbar{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;background:var(--white);border:1px solid var(--border);border-radius:24px;padding:4px;box-shadow:var(--shm);z-index:10;}
+.tool-btn{width:30px;height:30px;border-radius:20px;border:none;background:transparent;color:var(--slate);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;font-family:var(--fb);}
+.tool-btn:hover{background:var(--bg);color:var(--navy);}
+.tool-btn.active{background:var(--navy);color:var(--white);}
+.tool-sep{width:1px;background:var(--border);margin:4px 2px;}
+#scaffCanvas{width:100%;height:100%;cursor:crosshair;display:block;}
+.vp-status{position:absolute;bottom:12px;left:12px;background:rgba(30,42,56,0.8);color:rgba(255,255,255,0.9);padding:5px 12px;border-radius:20px;font-size:11px;font-family:var(--fd);letter-spacing:.5px;}
+.asnzs-badge{position:absolute;bottom:12px;right:12px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#15803d;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;}
+
+/* RIGHT PANEL */
+.d-right{width:280px;min-width:280px;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.r-tabs{display:flex;border-bottom:1px solid var(--border);}
+.r-tab{flex:1;padding:10px;font-size:11px;font-weight:600;text-align:center;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;color:var(--slate);border-bottom:2px solid transparent;transition:all .15s;}
+.r-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.r-content{flex:1;overflow-y:auto;padding:12px;}
+.to-row{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:center;}
+.to-row:last-child{border-bottom:none;}
+.to-code{font-weight:600;color:var(--navy);font-family:var(--fd);font-size:13px;}
+.to-name{color:var(--slate);font-size:11px;}
+.val-item{padding:8px 10px;border-radius:var(--r);margin-bottom:6px;font-size:12px;}
+.v-err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;}
+.v-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.v-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d;}
+.v-clause{font-size:10px;font-weight:600;opacity:.7;margin-bottom:2px;}
+
+/* MAP MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(14,20,27,0.65);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px);}
+.modal{background:var(--white);border-radius:var(--rl);width:880px;max-width:96vw;max-height:92vh;overflow:hidden;box-shadow:var(--shl);display:flex;flex-direction:column;}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--navy);}
+.modal-title{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--white);flex:1;}
+.modal-close{color:rgba(255,255,255,0.6);cursor:pointer;font-size:20px;padding:4px;transition:color .15s;background:none;border:none;}
+.modal-close:hover{color:var(--white);}
+.modal-body{display:flex;flex:1;overflow:hidden;min-height:480px;}
+.map-cont{flex:1;background:#d0d8e4;position:relative;overflow:hidden;}
+#mapCanvas{width:100%;height:100%;position:absolute;inset:0;display:block;}
+.map-srch{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:8px;}
+.map-srch input{flex:1;padding:10px 14px;border-radius:var(--r);border:1px solid var(--border);font-family:var(--fb);font-size:13px;background:var(--white);box-shadow:var(--shm);outline:none;color:var(--navy);}
+.map-srch input:focus{border-color:var(--orange);}
+.map-hint{position:absolute;bottom:12px;left:12px;background:rgba(30,42,56,0.8);color:white;padding:5px 12px;border-radius:20px;font-size:11px;}
+.map-panel{width:280px;min-width:280px;border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;gap:12px;}
+.map-addr{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
+.map-addr-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:4px;}
+.map-addr-val{font-size:13px;font-weight:600;color:var(--navy);}
+.map-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.map-metric{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;}
+.mm-val{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--navy);}
+.mm-lbl{font-size:10px;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.h-ctl label{font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px;}
+.h-ctl input[type=range]{width:100%;accent-color:var(--orange);}
+.h-val{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--orange);text-align:center;margin-top:4px;}
+.bld-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--white);border:1px solid var(--orange);border-radius:var(--r);font-size:12px;margin-bottom:6px;}
+
+/* COMING SOON */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;}
+.cs-icon{font-size:64px;margin-bottom:20px;opacity:.35;}
+.cs-title{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.cs-body{color:var(--slate);max-width:360px;line-height:1.6;margin-bottom:24px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-mark">Scaff<span>Sketch</span></div>
+    <div class="logo-sub">Design Platform</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-sect">Workspace</div>
+    <div class="nav-item active" onclick="pg('dashboard')"><span class="nav-icon">⊞</span>Dashboard<span class="nav-badge">3</span></div>
+    <div class="nav-item" onclick="pg('jobs')"><span class="nav-icon">◫</span>Jobs<span class="nav-badge">8</span></div>
+    <div class="nav-item" onclick="pg('files')"><span class="nav-icon">◱</span>Files</div>
+    <div class="nav-item" onclick="pg('notes')"><span class="nav-icon">◳</span>Notes</div>
+    <div class="nav-sect">Design</div>
+    <div class="nav-item" onclick="pg('designer')"><span class="nav-icon">◈</span>Design Studio</div>
+    <div class="nav-item" onclick="pg('yard')"><span class="nav-icon">◉</span>Your Scaff Yard</div>
+    <div class="nav-sect">Admin</div>
+    <div class="nav-item" onclick="pg('admin')"><span class="nav-icon">◎</span>Admin Panel</div>
+    <div class="nav-item" onclick="pg('compliance')"><span class="nav-icon">◐</span>AS/NZS 1576</div>
+    <div class="nav-item" onclick="pg('settings')"><span class="nav-icon">◌</span>Settings</div>
+  </div>
+  <div class="sb-footer">
+    <div class="user-block">
+      <div class="avatar">JD</div>
+      <div><div class="user-name">James Doyle</div><div class="user-role">Scaff Designer</div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-title" id="pgTitle">Dashboard</div>
+    <div class="tb-search"><span style="color:var(--slate2);font-size:12px">⌕</span><input type="text" placeholder="Search jobs, clients…"></div>
+    <div class="tb-clock" id="clock">--:--:--</div>
+    <div class="tb-btn">🔔<span class="notif-dot"></span></div>
+    <div class="tb-btn" style="width:auto;padding:0 12px;border-radius:20px;gap:6px">
+      <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:white;font-family:var(--fd)">JD</div>
+      <span class="role r-des">Designer</span>
+    </div>
+  </header>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="page active" id="p-dashboard">
+  <div class="page-scroll">
+    <div class="g4">
+      <div class="stat-card"><div class="stat-label">Active Jobs</div><div class="stat-val">8</div><div class="stat-sub">↑ 2 this week</div></div>
+      <div class="stat-card blue"><div class="stat-label">In Design</div><div class="stat-val">3</div><div class="stat-sub">Avg 2.4 days build</div></div>
+      <div class="stat-card green"><div class="stat-label">Quotes Ready</div><div class="stat-val">2</div><div class="stat-sub">Awaiting approval</div></div>
+      <div class="stat-card amber"><div class="stat-label">Overdue Review</div><div class="stat-val">1</div><div class="stat-sub">5+ days elapsed</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Recent Jobs</div>
+        <table class="tbl"><thead><tr><th>Ref</th><th>Site Address</th><th>Status</th><th>Elapsed</th></tr></thead>
+        <tbody>
+          <tr onclick="pg('jobdetail')" style="cursor:pointer"><td><b style="font-family:var(--fd)">SS-0041</b></td><td>42 Collins St, Melbourne</td><td><span class="chip c-des">In Design</span></td><td style="color:var(--amber);font-weight:600;font-family:var(--fd)">3d 14h</td></tr>
+          <tr><td><b style="font-family:var(--fd)">SS-0040</b></td><td>18 Flinders Lane</td><td><span class="chip c-qr">Quote Ready</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">1d 06h</td></tr>
+          <tr><td><b style="font-family:var(--fd)">SS-0039</b></td><td>8 Bourke St Mall</td><td><span class="chip c-rev">Under Review</span></td><td style="color:var(--red);font-weight:600;font-family:var(--fd)">6d 02h</td></tr>
+          <tr><td><b style="font-family:var(--fd)">SS-0038</b></td><td>200 Queen St, Brisbane</td><td><span class="chip c-app">Approved</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">2d 18h</td></tr>
+          <tr><td><b style="font-family:var(--fd)">SS-0037</b></td><td>95 Pitt St, Sydney</td><td><span class="chip c-est">Estimating</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">0d 22h</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Activity Feed</div>
+        <div class="act-item"><div class="act-dot" style="background:var(--orange)"></div><div><div><b>SS-0041</b> build timer started</div><div class="act-time">Today 09:14 AEST</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div><div><b>SS-0040</b> submitted to client</div><div class="act-time">Today 08:30 AEST</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--slate2)"></div><div><div><b>Meriton Group</b> left a note on SS-0039</div><div class="act-time">Yesterday 16:22</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:#3b82f6"></div><div><div><b>SS-0038</b> approved by client</div><div class="act-time">Yesterday 14:05</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--amber)"></div><div><div>New job submitted: <b>SS-0041</b></div><div class="act-time">Yesterday 11:41</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div><div><b>Yard import</b> complete: 847 items</div><div class="act-time">2 days ago</div></div></div>
+      </div>
+    </div>
+    <div class="comp-banner"><span style="font-size:18px;flex-shrink:0">✓</span><div><b>AS/NZS 1576.1:2010 — Scaffolding General Requirements</b> is the governing design standard for all ScaffSketch designs. This standard supersedes all international standards including BS EN 12811, OSHA, and DIN EN 12811 for Australian and New Zealand applications.</div></div>
+  </div>
+  </div>
+
+  <!-- ══ JOBS ══ -->
+  <div class="page" id="p-jobs">
+  <div class="page-scroll">
+    <div class="sec-hdr"><div class="sec-title">Jobs</div><button class="btn btn-p" onclick="pg('newjob')">+ New Job</button></div>
+    <div class="tabs"><div class="tab active">All (8)</div><div class="tab">Submitted</div><div class="tab">In Design (3)</div><div class="tab">Quote Ready (2)</div><div class="tab">Approved</div><div class="tab">Complete</div></div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl"><thead><tr><th>Ref</th><th>Client</th><th>Site Address</th><th>System</th><th>Status</th><th>Build Time</th><th>Draft→Submit</th><th></th></tr></thead>
+      <tbody>
+        <tr onclick="pg('jobdetail')" style="cursor:pointer"><td><b style="font-family:var(--fd)">SS-0041</b></td><td>Meriton Group</td><td>42 Collins St, Melbourne</td><td><span style="font-size:11px;background:var(--bg2);padding:2px 6px;border-radius:4px">Ringlock</span></td><td><span class="chip c-des">In Design</span></td><td style="color:var(--amber);font-weight:600;font-family:var(--fd)" id="jobs-t1">3d 14:22:09</td><td style="color:var(--slate)">—</td><td><button class="btn btn-s btn-sm">Open</button></td></tr>
+        <tr><td><b style="font-family:var(--fd)">SS-0040</b></td><td>Buildcorp</td><td>18 Flinders Lane, Melbourne</td><td><span style="font-size:11px;background:var(--bg2);padding:2px 6px;border-radius:4px">Kwikstage</span></td><td><span class="chip c-qr">Quote Ready</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">1d 06h</td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">0d 18h</td><td><button class="btn btn-s btn-sm">Open</button></td></tr>
+        <tr><td><b style="font-family:var(--fd)">SS-0039</b></td><td>Meriton Group</td><td>8 Bourke St Mall</td><td><span style="font-size:11px;background:var(--bg2);padding:2px 6px;border-radius:4px">Layher O</span></td><td><span class="chip c-rev">Under Review</span></td><td style="color:var(--red);font-weight:600;font-family:var(--fd)">6d 02h</td><td style="color:var(--red);font-weight:600;font-family:var(--fd)">4d 11h</td><td><button class="btn btn-s btn-sm">Open</button></td></tr>
+        <tr><td><b style="font-family:var(--fd)">SS-0038</b></td><td>ADCO</td><td>200 Queen St, Brisbane</td><td><span style="font-size:11px;background:var(--bg2);padding:2px 6px;border-radius:4px">Kwikstage</span></td><td><span class="chip c-app">Approved</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">2d 18h</td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">1d 02h</td><td><button class="btn btn-s btn-sm">Open</button></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ JOB DETAIL ══ -->
+  <div class="page" id="p-jobdetail">
+  <div class="page-scroll">
+    <div class="sec-hdr">
+      <div>
+        <button class="btn btn-g btn-sm" onclick="pg('jobs')" style="margin-bottom:8px">← Back</button>
+        <div style="display:flex;align-items:center;gap:12px"><div class="sec-title">SS-0041 — 42 Collins St, Melbourne</div><span class="chip c-des">In Design</span></div>
+        <div style="font-size:12px;color:var(--slate);margin-top:4px">Meriton Group · Ringlock · Heavy Duty (4.5 kPa) · AS/NZS 1576.1:2010</div>
+      </div>
+      <div style="display:flex;gap:8px"><button class="btn btn-s">Download PDF</button><button class="btn btn-p" onclick="pg('designer')">Open Designer</button></div>
+    </div>
+
+    <!-- ELAPSED TIMERS -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">⏱ Elapsed Time Tracking — AS/NZS 1576 Workflow</div>
+      <div class="timer-grid">
+        <div class="timer-card">
+          <div class="timer-lbl">Build Started → Now</div>
+          <div class="timer-val tv-amber" id="t1">3d 14:22:09</div>
+          <div class="timer-sub">Started today 09:14 AEST</div>
+        </div>
+        <div class="timer-card">
+          <div class="timer-lbl">Draft Complete → Submit</div>
+          <div class="timer-val tv-off">Not drafted yet</div>
+          <div class="timer-sub">Awaiting PDF draft</div>
+        </div>
+        <div class="timer-card">
+          <div class="timer-lbl">Submitted → Approval</div>
+          <div class="timer-val tv-off">Not submitted</div>
+          <div class="timer-sub">Pending submission</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-s btn-sm">▶ Start Build Timer</button>
+        <button class="btn btn-s btn-sm">◎ Convert to Draft</button>
+        <button class="btn btn-p btn-sm">✉ Submit to Client</button>
+      </div>
+    </div>
+
+    <div class="tabs"><div class="tab active">Overview</div><div class="tab">Notes</div><div class="tab">Files</div><div class="tab">Designs</div><div class="tab">Timeline</div></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Job Status Timeline</div>
+        <div id="statusSteps"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Notes</div>
+        <div class="note internal">
+          <div class="note-hdr"><div class="avatar" style="width:24px;height:24px;font-size:10px">JD</div><div class="note-name">James Doyle</div><span class="role r-des">Designer</span><span style="font-size:9px;background:#fffbeb;color:#b45309;padding:2px 6px;border-radius:10px;font-weight:600">Internal</span><div class="note-time">09:14 today</div></div>
+          <div class="note-body">Build started. Pulling building footprint from Bing Maps — 42 Collins St. Ringlock system, 3.07m bay lengths on western facade per AS/NZS 1576.1.</div>
+        </div>
+        <div class="note">
+          <div class="note-hdr"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--slate)">MG</div><div class="note-name">Mike Grant</div><span class="role r-cli">Client</span><div class="note-time">Yesterday</div></div>
+          <div class="note-body">Please ensure eastern access is stair tower, not ladder. Site manager requirement.</div>
+        </div>
+        <button class="btn btn-g btn-sm" style="width:100%;margin-top:8px">+ Add Note</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ NEW JOB ══ -->
+  <div class="page" id="p-newjob">
+  <div class="page-scroll" style="max-width:640px">
+    <div class="sec-hdr"><div><button class="btn btn-g btn-sm" onclick="pg('jobs')" style="margin-bottom:8px">← Cancel</button><div class="sec-title">New Job Submission</div></div></div>
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:24px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">1</div><div style="font-size:10px;color:var(--orange);font-weight:600;margin-top:4px">Details</div></div>
+      <div style="flex:1;height:2px;background:var(--border);margin-bottom:16px"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--slate);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">2</div><div style="font-size:10px;color:var(--slate);font-weight:600;margin-top:4px">Scope</div></div>
+      <div style="flex:1;height:2px;background:var(--border);margin-bottom:16px"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--slate);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">3</div><div style="font-size:10px;color:var(--slate);font-weight:600;margin-top:4px">Files</div></div>
+      <div style="flex:1;height:2px;background:var(--border);margin-bottom:16px"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--slate);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">4</div><div style="font-size:10px;color:var(--slate);font-weight:600;margin-top:4px">Review</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Step 1 — Project Details</div>
+      <div class="fg"><label class="fl">Site Address *</label><input class="fi" placeholder="42 Collins St, Melbourne VIC 3000"></div>
+      <div class="fg"><label class="fl">Project Title *</label><input class="fi" placeholder="Collins St Facade Scaffold"></div>
+      <div class="fg"><label class="fl">Client</label><select class="fi fsel"><option>Meriton Group</option><option>Buildcorp</option><option>ADCO Construction</option></select></div>
+      <div class="fg"><label class="fl">Duty Rating (AS/NZS 1576.1 Cl.2.5)</label><select class="fi fsel"><option>Light — 1.5 kPa</option><option>Medium — 2.5 kPa</option><option selected>Heavy — 4.5 kPa</option><option>Special — >4.5 kPa (engineer required)</option></select></div>
+      <div class="fg"><label class="fl">Access Notes</label><textarea class="fi" rows="3" placeholder="Site-specific access requirements…"></textarea></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-g" onclick="pg('jobs')">Cancel</button><button class="btn btn-p">Next: Scope →</button></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ NOTES ══ -->
+  <div class="page" id="p-notes">
+  <div class="page-scroll">
+    <div class="sec-hdr"><div class="sec-title">Notes</div><button class="btn btn-p">+ New Note</button></div>
+    <div style="max-width:680px">
+      <div class="note internal">
+        <div class="note-hdr"><div class="avatar" style="width:28px;height:28px;font-size:11px">JD</div><div class="note-name">James Doyle</div><span class="role r-des">Designer</span><span style="font-size:10px;background:#fffbeb;color:#b45309;padding:2px 6px;border-radius:10px;font-weight:600">Internal</span><div class="note-time">09:14 today</div></div>
+        <div class="note-body">SS-0041 build started. Ringlock system confirmed. Bing Maps footprint for 42 Collins St — perimeter 142.4m. Using 3.07m bay lengths on western facade. Duty: Heavy 4.5 kPa per AS/NZS 1576.1 Cl.2.5.</div>
+      </div>
+      <div class="note">
+        <div class="note-hdr"><div class="avatar" style="width:28px;height:28px;font-size:11px;background:var(--slate)">MG</div><div class="note-name">Mike Grant</div><span class="role r-cli">Client</span><div class="note-time">Yesterday 16:22</div></div>
+        <div class="note-body">Eastern access must be stair tower — site manager confirmed no ladder access on that side. Can we get a 3D PDF before final approval?</div>
+      </div>
+      <div class="note internal">
+        <div class="note-hdr"><div class="avatar" style="width:28px;height:28px;font-size:11px">AD</div><div class="note-name">Admin</div><span class="role r-admin">Admin</span><span style="font-size:10px;background:#fffbeb;color:#b45309;padding:2px 6px;border-radius:10px;font-weight:600">Internal</span><div class="note-time">2 days ago</div></div>
+        <div class="note-body">Duty rating confirmed HEAVY (4.5 kPa) per AS/NZS 1576.1:2010 Cl.2.5. Client briefed on classification. Design to proceed accordingly.</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ FILES ══ -->
+  <div class="page" id="p-files">
+  <div class="page-scroll">
+    <div class="sec-hdr"><div class="sec-title">File Library</div><button class="btn btn-p">+ Upload Files</button></div>
+    <div class="g3">
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px"><div style="font-size:32px">📄</div><div><div style="font-weight:600;font-size:13px">SS-0041_site_plan.pdf</div><div style="font-size:11px;color:var(--slate)">2.4 MB · Uploaded today</div></div></div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px"><div style="font-size:32px">🏗️</div><div><div style="font-weight:600;font-size:13px">SS-0040_design_v2.ssd</div><div style="font-size:11px;color:var(--slate)">1.1 MB · Yesterday</div></div></div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px"><div style="font-size:32px">📐</div><div><div style="font-weight:600;font-size:13px">SS-0039_client_brief.docx</div><div style="font-size:11px;color:var(--slate)">340 KB · 2 days ago</div></div></div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px"><div style="font-size:32px">📋</div><div><div style="font-weight:600;font-size:13px">SS-0041_takeoff.csv</div><div style="font-size:11px;color:var(--slate)">18 KB · Today</div></div></div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px"><div style="font-size:32px">🗺️</div><div><div style="font-weight:600;font-size:13px">SS-0041_footprint.geojson</div><div style="font-size:11px;color:var(--slate)">4 KB · Today</div></div></div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:16px;border:2px dashed var(--border);background:var(--bg);cursor:pointer"><div style="font-size:32px;opacity:.4">+</div><div style="color:var(--slate);font-size:13px">Drop files here or click to upload</div></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ DESIGNER STUDIO ══ -->
+  <div class="page" id="p-designer" style="flex-direction:row">
+    <!-- Left palette -->
+    <div class="d-left">
+      <div class="d-left-hdr">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:6px">Scaffold System</div>
+        <div class="sys-tabs">
+          <div class="sys-tab active" onclick="selSys(this,'Kwikstage')">KWS</div>
+          <div class="sys-tab" onclick="selSys(this,'Ringlock')">RLK</div>
+          <div class="sys-tab" onclick="selSys(this,'T&C ATPAC')">T&C</div>
+          <div class="sys-tab" onclick="selSys(this,'Layher O')">LH-O</div>
+          <div class="sys-tab" onclick="selSys(this,'Layher U')">LH-U</div>
+          <div class="sys-tab" onclick="selSys(this,'T&C BSW')">BSW</div>
+        </div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:6px">
+          <div style="font-size:10px;color:var(--slate);white-space:nowrap">Yard:</div>
+          <select class="fi fsel" style="padding:4px 24px 4px 8px;font-size:11px;height:auto">
+            <option>Main Yard — Brisbane</option><option>No yard constraint</option>
+          </select>
+        </div>
+      </div>
+      <div class="palette" id="palette"></div>
+    </div>
+
+    <!-- Viewport -->
+    <div class="vp-wrap">
+      <div class="vp-toolbar">
+        <button class="tool-btn active" title="Select">↖</button>
+        <button class="tool-btn" title="Move">⊹</button>
+        <button class="tool-btn" title="Rotate">↻</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" title="Add Bay" onclick="addBay()">⊞</button>
+        <button class="tool-btn" title="Add Lift">⬆</button>
+        <button class="tool-btn" title="Mirror X">↔</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" title="Undo">↺</button>
+        <button class="tool-btn" title="Delete" onclick="delSel()">⊗</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="openMap()" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;color:var(--orange)">📍 MAP</button>
+      </div>
+      <canvas id="scaffCanvas"></canvas>
+      <div class="vp-status" id="vpStatus">SS-0041 · Kwikstage · 0 components</div>
+      <div class="asnzs-badge">✓ AS/NZS 1576.1:2010</div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="d-right">
+      <div class="r-tabs">
+        <div class="r-tab active" onclick="selRTab(this,'to')">Take-off</div>
+        <div class="r-tab" onclick="selRTab(this,'val')">Validate</div>
+        <div class="r-tab" onclick="selRTab(this,'props')">Properties</div>
+      </div>
+      <div class="r-content">
+        <div id="rt-to">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:10px">Live Component Take-Off</div>
+          <div id="toTable"></div>
+          <div style="border-top:2px solid var(--navy);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-weight:700;font-size:12px"><span>Total weight</span><span id="toWeight">0 kg</span></div>
+          <div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-s btn-sm" style="flex:1">CSV</button><button class="btn btn-p btn-sm" style="flex:1">PDF</button></div>
+        </div>
+        <div id="rt-val" style="display:none">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:10px">AS/NZS 1576.1:2010 Validation</div>
+          <div id="valItems"></div>
+        </div>
+        <div id="rt-props" style="display:none">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--slate);font-weight:600;margin-bottom:10px">Selected Component</div>
+          <div id="propsBox" style="color:var(--slate);font-size:12px">Click a component in the viewport to inspect.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ YOUR SCAFF YARD ══ -->
+  <div class="page" id="p-yard">
+  <div class="page-scroll">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Your Scaff Yard</div><div style="font-size:12px;color:var(--slate);margin-top:2px">Main Yard — Brisbane, QLD</div></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-s">Export CSV</button><button class="btn btn-s">Import CSV</button><button class="btn btn-p">+ Add Item</button></div>
+    </div>
+    <div class="g3" style="margin-bottom:16px">
+      <div class="yard-stat"><div class="yard-val">847</div><div class="yard-lbl">Total Items</div><div class="prog"><div class="prog-fill pf-g" style="width:78%"></div></div></div>
+      <div class="yard-stat"><div class="yard-val" style="color:var(--amber)">12</div><div class="yard-lbl">Below Minimum</div><div class="prog"><div class="prog-fill" style="width:14%;background:var(--amber)"></div></div></div>
+      <div class="yard-stat"><div class="yard-val" style="color:var(--red)">3</div><div class="yard-lbl">Depleted</div><div class="prog"><div class="prog-fill pf-r" style="width:4%"></div></div></div>
+    </div>
+    <div class="tabs"><div class="tab active">Inventory</div><div class="tab">Gear Templates</div><div class="tab">Design Constraints</div></div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="inv-row hdr"><div>Component</div><div>On Hand</div><div>Min Stock</div><div>Available</div><div>Status</div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">AS-KS20</div><div style="font-size:11px;color:var(--slate)">Kwikstage Standard 2.0m</div></div><div style="font-weight:600">124</div><div style="color:var(--slate)">20</div><div style="font-weight:600;color:var(--green)">108</div><div><span class="yb yb-g">● Good</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">AS-KL170</div><div style="font-size:11px;color:var(--slate)">Kwikstage Ledger 1.7m</div></div><div style="font-weight:600">86</div><div style="color:var(--slate)">30</div><div style="font-weight:600;color:var(--green)">62</div><div><span class="yb yb-g">● Good</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">2601.157</div><div style="font-size:11px;color:var(--slate)">Layher O-Ledger LW 1.57m</div></div><div style="font-weight:600">18</div><div style="color:var(--slate)">20</div><div style="font-weight:600;color:var(--amber)">14</div><div><span class="yb yb-a">⚠ Low</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">CRA19</div><div style="font-size:11px;color:var(--slate)">BSW Dual Purpose Right Angle Clamp</div></div><div style="font-weight:600">0</div><div style="color:var(--slate)">10</div><div style="font-weight:600;color:var(--red)">0</div><div><span class="yb yb-r">✗ Depleted</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">AS-KDB240</div><div style="font-size:11px;color:var(--slate)">Kwikstage Diagonal Brace 2.4m</div></div><div style="font-weight:600">44</div><div style="color:var(--slate)">15</div><div style="font-weight:600;color:var(--green)">44</div><div><span class="yb yb-g">● Good</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">2617.200</div><div style="font-size:11px;color:var(--slate)">Layher Standard LW 2.0m</div></div><div style="font-weight:600">60</div><div style="color:var(--slate)">12</div><div style="font-weight:600;color:var(--green)">45</div><div><span class="yb yb-g">● Good</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">3883.157</div><div style="font-size:11px;color:var(--slate)">Layher U-Steel Deck LW 1.57m</div></div><div style="font-weight:600">31</div><div style="color:var(--slate)">10</div><div style="font-weight:600;color:var(--green)">31</div><div><span class="yb yb-g">● Good</span></div></div>
+      <div class="inv-row"><div><div style="font-weight:600;font-family:var(--fd);font-size:13px">ST8SG</div><div style="font-size:11px;color:var(--slate)">BSW Steel Tube 8ft Interlocking</div></div><div style="font-weight:600">8</div><div style="color:var(--slate)">10</div><div style="font-weight:600;color:var(--amber)">8</div><div><span class="yb yb-a">⚠ Low</span></div></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div class="page" id="p-admin">
+  <div class="page-scroll">
+    <div class="sec-hdr"><div class="sec-title">Admin Panel</div><div style="display:flex;gap:8px"><button class="btn btn-s">Export All Jobs</button><button class="btn btn-p">+ Invite Client</button></div></div>
+    <div class="g4">
+      <div class="stat-card"><div class="stat-label">Total Clients</div><div class="stat-val">24</div><div class="stat-sub">4 added this month</div></div>
+      <div class="stat-card blue"><div class="stat-label">Active Designs</div><div class="stat-val">11</div><div class="stat-sub">3 overdue review</div></div>
+      <div class="stat-card green"><div class="stat-label">Completed Jobs</div><div class="stat-val">142</div><div class="stat-sub">Since launch</div></div>
+      <div class="stat-card amber"><div class="stat-label">Avg Build Time</div><div class="stat-val">2.4d</div><div class="stat-sub">Last 30 days</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">All Active Jobs</div>
+      <table class="tbl"><thead><tr><th>Ref</th><th>Client</th><th>Site</th><th>Designer</th><th>Status</th><th>Build→Draft</th><th>Draft→Submit</th></tr></thead>
+      <tbody>
+        <tr><td><b style="font-family:var(--fd)">SS-0041</b></td><td>Meriton Group</td><td>42 Collins St</td><td>James Doyle</td><td><span class="chip c-des">In Design</span></td><td style="color:var(--amber);font-weight:600;font-family:var(--fd)">3d 14h</td><td style="color:var(--slate)">—</td></tr>
+        <tr><td><b style="font-family:var(--fd)">SS-0040</b></td><td>Buildcorp</td><td>18 Flinders Ln</td><td>James Doyle</td><td><span class="chip c-qr">Quote Ready</span></td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">1d 06h</td><td style="color:var(--green);font-weight:600;font-family:var(--fd)">0d 18h</td></tr>
+        <tr><td><b style="font-family:var(--fd)">SS-0039</b></td><td>Meriton Group</td><td>8 Bourke St</td><td>Sarah Chen</td><td><span class="chip c-rev">Under Review</span></td><td style="color:var(--red);font-weight:600;font-family:var(--fd)">6d 02h</td><td style="color:var(--red);font-weight:600;font-family:var(--fd)">4d 11h</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ AS/NZS COMPLIANCE ══ -->
+  <div class="page" id="p-compliance">
+  <div class="page-scroll">
+    <div class="sec-hdr"><div><div class="sec-title">AS/NZS 1576.1:2010 — Design Standard</div><div style="font-size:12px;color:var(--slate);margin-top:2px">Scaffolding General Requirements · Governing standard for all ScaffSketch designs</div></div><span class="chip c-app" style="font-size:13px;padding:6px 14px">✓ Active Standard</span></div>
+    <div class="comp-banner" style="margin-bottom:16px"><span style="font-size:18px;flex-shrink:0">⚠</span><div><b>Standard Note:</b> The use of standards from another country when importing scaffolding equipment may not result in compliance with AS/NZS 1576. Design, performance and/or test criteria may be of a lesser level in other standards. AS/NZS 1576 supersedes all international standards for Australian and New Zealand applications.</div></div>
+    <div class="g2">
+      <div class="card"><div class="card-title">Design Load Classes (Cl. 2.5)</div>
+        <table class="tbl"><thead><tr><th>Duty Rating</th><th>Max UDL</th><th>Application</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip" style="background:#eff6ff;color:#1d4ed8">Light</span></td><td><b>1.5 kPa</b></td><td>Inspection, light hand work</td></tr>
+          <tr><td><span class="chip" style="background:#f3e8ff;color:#7c3aed">Medium</span></td><td><b>2.5 kPa</b></td><td>General construction</td></tr>
+          <tr><td><span class="chip" style="background:#fff7ed;color:#c2410c">Heavy</span></td><td><b>4.5 kPa</b></td><td>Masonry, concrete work</td></tr>
+          <tr><td><span class="chip" style="background:#fef2f2;color:#b91c1c">Special</span></td><td><b>&gt;4.5 kPa</b></td><td>Engineer sign-off required</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="card-title">Operational Requirements</div>
+        <table class="tbl"><thead><tr><th>Parameter</th><th>Value</th><th>Clause</th></tr></thead>
+        <tbody>
+          <tr><td>Min platform width</td><td><b>450mm</b></td><td>Cl. 3.7</td></tr>
+          <tr><td>Guardrail height</td><td><b>≥ 900mm</b></td><td>Cl. 3.10</td></tr>
+          <tr><td>Midrail height</td><td><b>450mm</b></td><td>Cl. 3.10</td></tr>
+          <tr><td>Toeboard height</td><td><b>≥ 150mm</b></td><td>Cl. 3.10</td></tr>
+          <tr><td>Stair going (tread)</td><td><b>215–355mm</b></td><td>Cl. 3.11</td></tr>
+          <tr><td>Stair rise</td><td><b>150–225mm</b></td><td>Cl. 3.11</td></tr>
+          <tr><td>Min stair width</td><td><b>450mm</b></td><td>Cl. 3.11</td></tr>
+          <tr><td>Plumb tolerance</td><td><b>1 in 200</b></td><td>Cl. 3.2</td></tr>
+          <tr><td>Max overhang</td><td><b>150mm</b></td><td>Cl. 3.6</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="page" id="p-settings">
+  <div class="page-scroll" style="max-width:600px">
+    <div class="sec-hdr"><div class="sec-title">Settings</div></div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Profile</div>
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" value="James Doyle"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" value="james@scaffsketch.com"></div>
+      <div class="fg"><label class="fl">Role</label><input class="fi" value="Scaff Designer" disabled style="background:var(--bg);color:var(--slate)"></div>
+      <button class="btn btn-p">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Notifications</div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span>New job submitted</span><input type="checkbox" checked></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span>Client approves design</span><input type="checkbox" checked></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span>Client rejects design</span><input type="checkbox" checked></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span>Design overdue (5+ days)</span><input type="checkbox" checked></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span>Weekly summary email</span><input type="checkbox"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+</div><!-- end .main -->
+</div><!-- end .app -->
+
+<!-- MAP MODAL -->
+<div class="modal-ov" id="mapModal" style="display:none" onclick="if(event.target===this)closeMap()">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">📍 Import Building Footprint — Bing Maps</div>
+      <button class="modal-close" onclick="closeMap()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="map-cont">
+        <canvas id="mapCanvas"></canvas>
+        <div class="map-srch">
+          <input type="text" id="mapInput" value="42 Collins St, Melbourne VIC 3000" placeholder="Search address…">
+          <button class="btn btn-p btn-sm" onclick="mapSearch()">Search</button>
+        </div>
+        <div class="map-hint">Click building to select · Shift+click multi-select</div>
+      </div>
+      <div class="map-panel">
+        <div class="map-addr">
+          <div class="map-addr-lbl">Resolved Address</div>
+          <div class="map-addr-val" id="mapAddrVal">42 Collins Street</div>
+          <div style="font-size:11px;color:var(--slate);margin-top:2px" id="mapAddrSub">Melbourne VIC 3000 · Australia</div>
+        </div>
+        <div class="map-metrics">
+          <div class="map-metric"><div class="mm-val" id="mapPerim">142.4</div><div class="mm-lbl">Perimeter (m)</div></div>
+          <div class="map-metric"><div class="mm-val" id="mapArea">842</div><div class="mm-lbl">Area (m²)</div></div>
+        </div>
+        <div class="h-ctl">
+          <label>Building Height (extrusion)</label>
+          <input type="range" min="1" max="50" value="12" id="hSlider" oninput="updH(this.value)">
+          <div class="h-val" id="hVal">12.0m</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Alignment</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-s btn-sm" onclick="rotMap(45)">↻ 45°</button>
+            <button class="btn btn-s btn-sm" onclick="rotMap(90)">↻ 90°</button>
+            <button class="btn btn-p btn-sm" onclick="snapMap()">⊞ Snap to Grid</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Selected Buildings</div>
+          <div class="bld-item"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0"></div><div><div style="font-weight:600;font-size:12px">Building A — 42 Collins St</div><div style="font-size:10px;color:var(--slate)">842m² · 142.4m perimeter</div></div></div>
+        </div>
+        <button class="btn btn-p" style="width:100%" onclick="importBuilding()">Import to 3D Workspace</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CLOCK ───
+function tick(){
+  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m+':'+s+' AEST';
+}
+setInterval(tick,1000);tick();
+
+// ─── ELAPSED TIMERS ───
+const buildStart=Date.now()-(3*86400000+14*3600000+22*60000+9000);
+function updTimers(){
+  ['t1','jobs-t1'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const e=Date.now()-buildStart,d=Math.floor(e/86400000),h=Math.floor((e%86400000)/3600000),m=Math.floor((e%3600000)/60000),s=Math.floor((e%60000)/1000);
+    el.textContent=d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const days=e/86400000;
+    if(id==='t1') el.className='timer-val '+(days<2?'tv-green':days<5?'tv-amber':'tv-red');
+  });
+}
+setInterval(updTimers,1000);updTimers();
+
+// ─── PAGE NAV ───
+const titles={dashboard:'Dashboard',jobs:'Jobs',jobdetail:'SS-0041 — Job Detail',newjob:'New Job',designer:'Design Studio',yard:'Your Scaff Yard',files:'File Library',notes:'Notes',admin:'Admin Panel',compliance:'AS/NZS 1576.1:2010',settings:'Settings'};
+function pg(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('p-'+id);
+  if(t){t.classList.add('active');}
+  document.getElementById('pgTitle').textContent=titles[id]||id;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const map={dashboard:'Dashboard',jobs:'Jobs',designer:'Design',yard:'Scaff Yard',files:'Files',notes:'Notes',admin:'Admin',compliance:'AS/NZS',settings:'Settings'};
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    const txt=n.textContent.trim();
+    if(map[id]&&txt.includes(map[id]))n.classList.add('active');
+  });
+  if(id==='designer')setTimeout(initCanvas,80);
+}
+
+// ─── STATUS STEPS ───
+const steps=['Submitted','Under Review','Estimating','Quote Ready','Approved','In Design','Complete'];
+const curStep=5;
+const ss=document.getElementById('statusSteps');
+if(ss){
+  steps.forEach((s,i)=>{
+    const done=i<curStep,cur=i===curStep;
+    ss.innerHTML+=`<div style="display:flex;align-items:center;gap:12px;padding:8px 0;${i<steps.length-1?'border-left:2px solid '+(done?'var(--orange)':'var(--border)')+';margin-left:9px;padding-left:18px':' margin-left:11px;padding-left:16px'}">
+      <div style="width:20px;height:20px;border-radius:50%;background:${cur?'var(--orange)':done?'var(--green)':'var(--border)'};color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;${i<steps.length-1?'margin-left:-28px':''}">${done?'✓':cur?'●':''}</div>
+      <span style="font-size:13px;font-weight:${cur?700:400};color:${cur?'var(--orange)':done?'var(--navy)':'var(--slate2)'}">${s}</span>
+    </div>`;
+  });
+}
+
+// ─── PALETTE DATA ───
+const PAL={
+  Kwikstage:[
+    {cat:'Standards',items:[{code:'AS-KS10',name:'Standard 1.0m',dim:'1000mm',dot:'d-std',qty:124},{code:'AS-KS20',name:'Standard 2.0m',dim:'2000mm',dot:'d-std',qty:108},{code:'AS-KS30',name:'Standard 3.0m',dim:'3000mm',dot:'d-std',qty:44}]},
+    {cat:'Ledgers',items:[{code:'AS-KL170',name:'Ledger 1.7m',dim:'1700mm',dot:'d-led',qty:62},{code:'AS-KL244',name:'Ledger 2.44m',dim:'2440mm',dot:'d-led',qty:38}]},
+    {cat:'Boards',items:[{code:'AS-KP240',name:'Steel Plank 240mm',dim:'240×38mm',dot:'d-brd',qty:55}]},
+    {cat:'Braces',items:[{code:'AS-KDB240',name:'Diagonal Brace 2.4m',dim:'2400mm',dot:'d-brc',qty:44}]},
+    {cat:'Safety',items:[{code:'AS-KTB170',name:'Toe Board 1.7m',dim:'1700mm',dot:'d-saf',qty:30}]}
+  ],
+  Ringlock:[
+    {cat:'Standards',items:[{code:'2617.200',name:'Standard LW 2.0m',dim:'2000mm',dot:'d-std',qty:45},{code:'2617.300',name:'Standard LW 3.0m',dim:'3000mm',dot:'d-std',qty:24}]},
+    {cat:'Ledgers',items:[{code:'2601.157',name:'O-Ledger LW 1.57m',dim:'1570mm',dot:'d-led',qty:14},{code:'2601.307',name:'O-Ledger LW 3.07m',dim:'3070mm',dot:'d-led',qty:22}]},
+    {cat:'Boards',items:[{code:'3883.157',name:'U-Steel Deck LW 1.57m',dim:'1570×320mm',dot:'d-brd',qty:31}]},
+    {cat:'Braces',items:[{code:'2683.157',name:'Diagonal Brace LW 1.57m',dim:'2490mm',dot:'d-brc',qty:18}]}
+  ],
+  'Layher O':[
+    {cat:'Standards',items:[{code:'2617.200',name:'Standard LW 2.0m',dim:'2000mm',dot:'d-std',qty:45}]},
+    {cat:'Ledgers',items:[{code:'2601.157',name:'O-Ledger LW 1.57m',dim:'1570mm',dot:'d-led',qty:14},{code:'2601.307',name:'O-Ledger LW 3.07m',dim:'3070mm',dot:'d-led',qty:22}]},
+    {cat:'Boards',items:[{code:'3890.157',name:'O-Steel Deck LW 1.57m',dim:'1570×320mm',dot:'d-brd',qty:20}]}
+  ],
+  'Layher U':[
+    {cat:'Standards',items:[{code:'2617.200',name:'Standard LW 2.0m',dim:'2000mm',dot:'d-std',qty:45}]},
+    {cat:'Ledgers',items:[{code:'2618.109',name:'U-Ledger LW T14 1.09m',dim:'1090mm',dot:'d-led',qty:28},{code:'2618.157',name:'U-Ledger LW T14 1.57m',dim:'1570mm',dot:'d-led',qty:16}]},
+    {cat:'Boards',items:[{code:'3883.157',name:'U-Steel Deck LW 1.57m',dim:'1570×320mm',dot:'d-brd',qty:31}]}
+  ],
+  'T&C ATPAC':[
+    {cat:'Tubes',items:[{code:'ST8SG',name:'Steel Tube 8ft',dim:'2440mm OD48.3',dot:'d-std',qty:8},{code:'ST13SG',name:'Steel Tube 13ft',dim:'3962mm',dot:'d-std',qty:12}]},
+    {cat:'Clamps',items:[{code:'CRA19',name:'Right Angle Clamp',dim:'1.69/1.90" OD',dot:'d-brc',qty:0},{code:'CSA19',name:'Swivel Clamp',dim:'1.69/1.90" OD',dot:'d-brc',qty:22}]},
+    {cat:'Base',items:[{code:'BP1SG',name:'Base Plate',dim:'Twist & Lock',dot:'d-saf',qty:18}]}
+  ],
+  'T&C BSW':[
+    {cat:'Tubes',items:[{code:'ST8SG',name:'Steel Tube 8ft',dim:'2440mm OD48.3',dot:'d-std',qty:8},{code:'ST16SG',name:'Steel Tube 16ft',dim:'4877mm',dot:'d-std',qty:6}]},
+    {cat:'Clamps',items:[{code:'CRA19',name:'DP Right Angle Clamp',dim:'1.69/1.90" OD',dot:'d-brc',qty:0},{code:'CSA19',name:'DP Swivel Clamp',dim:'1.69/1.90" OD',dot:'d-brc',qty:22}]},
+    {cat:'Base',items:[{code:'BP1SG',name:'Base Plate',dim:'Twist & Lock',dot:'d-saf',qty:18}]}
+  ]
+};
+
+function buildPalette(sys){
+  const p=document.getElementById('palette');if(!p)return;
+  const d=PAL[sys]||PAL['Kwikstage'];
+  p.innerHTML='';
+  d.forEach(g=>{
+    let h=`<div class="pal-grp-title">${g.cat}</div>`;
+    g.items.forEach(item=>{
+      const q=item.qty;
+      const badge=q===0?`<span class="yb yb-r">0</span>`:q<20?`<span class="yb yb-a">${q}</span>`:`<span class="yb yb-g">${q}</span>`;
+      h+=`<div class="pal-item" onclick="selItem('${item.code}','${item.name}',this)">
+        <div class="pal-dot ${item.dot}"></div>
+        <div style="flex:1;min-width:0"><div class="pal-name">${item.name}</div><div class="pal-dim">${item.dim}</div></div>
+        ${badge}
+      </div>`;
+    });
+    p.innerHTML+=h;
+  });
+}
+buildPalette('Kwikstage');
+
+function selSys(el,sys){
+  document.querySelectorAll('.sys-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  buildPalette(sys);
+}
+
+let selComp=null;
+function selItem(code,name,el){
+  selComp={code,name};
+  document.querySelectorAll('.pal-item').forEach(p=>p.classList.remove('placing'));
+  el.classList.add('placing');
+  document.getElementById('vpStatus').textContent='Placing: '+name+' — click viewport';
+}
+
+// ─── 3D CANVAS ───
+const scene=[];
+let importedBldg=null;
+const ISO=Math.PI/6;
+
+function initCanvas(){
+  const c=document.getElementById('scaffCanvas');if(!c)return;
+  const w=c.parentElement;
+  c.width=w.clientWidth;c.height=w.clientHeight;
+  c.onclick=onCanvasClick;
+  renderScene();
+}
+
+function w2s(c,x,z,y=0){
+  const cx=c.width/2,cy=c.height/2,sc=Math.min(c.width,c.height)/18;
+  return{sx:cx+(x-z)*Math.cos(ISO)*sc,sy:cy+(x+z)*Math.sin(ISO)*sc-y*sc*0.6};
+}
+
+function renderScene(){
+  const c=document.getElementById('scaffCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#e8ecf0';ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='rgba(30,42,56,0.07)';ctx.lineWidth=0.5;
+  for(let i=-10;i<=10;i++){
+    const a=w2s(c,i,-10),b=w2s(c,i,10);ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);ctx.stroke();
+    const e=w2s(c,-10,i),f=w2s(c,10,i);ctx.beginPath();ctx.moveTo(e.sx,e.sy);ctx.lineTo(f.sx,f.sy);ctx.stroke();
+  }
+  // imported building
+  if(importedBldg){
+    const fp=importedBldg.fp,h=importedBldg.h;
+    ctx.globalAlpha=0.15;ctx.fillStyle='#1E2A38';
+    for(let i=0;i<fp.length;i++){
+      const v1=fp[i],v2=fp[(i+1)%fp.length];
+      const p1b=w2s(c,v1[0],v1[1],0),p2b=w2s(c,v2[0],v2[1],0),p1t=w2s(c,v1[0],v1[1],h),p2t=w2s(c,v2[0],v2[1],h);
+      ctx.beginPath();ctx.moveTo(p1b.sx,p1b.sy);ctx.lineTo(p2b.sx,p2b.sy);ctx.lineTo(p2t.sx,p2t.sy);ctx.lineTo(p1t.sx,p1t.sy);ctx.closePath();ctx.fill();
+    }
+    ctx.globalAlpha=1;ctx.strokeStyle='#1E2A38';ctx.lineWidth=1.5;
+    for(let i=0;i<fp.length;i++){
+      const v1=fp[i],v2=fp[(i+1)%fp.length];
+      [0,h].forEach(y=>{const p1=w2s(c,v1[0],v1[1],y),p2=w2s(c,v2[0],v2[1],y);ctx.beginPath();ctx.moveTo(p1.sx,p1.sy);ctx.lineTo(p2.sx,p2.sy);ctx.stroke();});
+      const pb=w2s(c,v1[0],v1[1],0),pt=w2s(c,v1[0],v1[1],h);ctx.beginPath();ctx.moveTo(pb.sx,pb.sy);ctx.lineTo(pt.sx,pt.sy);ctx.stroke();
+    }
+    ctx.lineWidth=1;
+  }
+  // components
+  scene.forEach(o=>drawComp(ctx,c,o));
+  // status
+  const st=document.getElementById('vpStatus');
+  const sys=document.querySelector('.sys-tab.active')?.textContent||'KWS';
+  const sm={KWS:'Kwikstage',RLK:'Ringlock','T&C':'T&C ATPAC','LH-O':'Layher O','LH-U':'Layher U',BSW:'T&C BSW'};
+  if(st)st.textContent='SS-0041 · '+(sm[sys]||sys)+' · '+scene.length+' components';
+  updTakeoff();
+}
+
+function drawComp(ctx,c,o){
+  const p=w2s(c,o.x,o.z,0),pt=w2s(c,o.x,o.z,o.h||0);
+  const cols={standard:'#1E2A38',ledger:'#64748B',board:'#C4A265',brace:'#F97316',safety:'#22C55E'};
+  const col=cols[o.type]||'#1E2A38';
+  if(o.type==='standard'){
+    ctx.strokeStyle=col;ctx.lineWidth=3;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(p.sx,p.sy);ctx.lineTo(pt.sx,pt.sy);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(p.sx,p.sy,4,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(pt.sx,pt.sy,3,0,Math.PI*2);ctx.fill();
+  }else if(o.type==='ledger'||o.type==='board'){
+    const p2=w2s(c,o.x+(o.dx||1),o.z+(o.dz||0),o.y||0);
+    ctx.strokeStyle=col;ctx.lineWidth=o.type==='board'?5:2;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(p.sx,p.sy);ctx.lineTo(p2.sx,p2.sy);ctx.stroke();
+  }else if(o.type==='brace'){
+    const p2=w2s(c,o.x+1,o.z,o.h||2);
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(p.sx,p.sy);ctx.lineTo(p2.sx,p2.sy);ctx.stroke();
+    ctx.setLineDash([]);
+  }else if(o.type==='safety'){
+    const p2=w2s(c,o.x+(o.dx||1),o.z,o.y||0);
+    ctx.strokeStyle=col;ctx.lineWidth=4;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(p.sx,p.sy);ctx.lineTo(p2.sx,p2.sy);ctx.stroke();
+  }
+  if(o.sel){ctx.strokeStyle='#F97316';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.sx,p.sy,9,0,Math.PI*2);ctx.stroke();}
+  ctx.fillStyle='rgba(30,42,56,0.5)';ctx.font='9px Inter,sans-serif';ctx.fillText(o.code,p.sx+7,p.sy-4);
+}
+
+function onCanvasClick(e){
+  if(!selComp)return;
+  const c=document.getElementById('scaffCanvas');
+  const r=c.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  const cx=c.width/2,cy=c.height/2,sc=Math.min(c.width,c.height)/18;
+  const dx=(mx-cx)/sc,dy=(my-cy)/sc;
+  const x=Math.round((dx/(2*Math.cos(ISO))+dy/(2*Math.sin(ISO))));
+  const z=Math.round((-dx/(2*Math.cos(ISO))+dy/(2*Math.sin(ISO))));
+  const tm={'Standard':'standard','Ledger':'ledger','Diagonal':'brace','Plank':'board','Deck':'board','Toe Board':'safety','Brace':'brace','Tube':'standard','Clamp':'brace','Base Plate':'safety'};
+  let type='standard';
+  for(const[k,v]of Object.entries(tm)){if(selComp.name.includes(k)){type=v;break;}}
+  scene.push({x,z,h:2,y:0,dx:1,dz:0,code:selComp.code,name:selComp.name,type,sel:false});
+  selComp=null;
+  document.querySelectorAll('.pal-item').forEach(p=>p.classList.remove('placing'));
+  renderScene();updValidation();
+}
+
+function addBay(){
+  const bx=scene.length>0?Math.max(...scene.map(o=>o.x))+2:0;
+  [{x:bx,z:0,h:2,code:'AS-KS20',name:'Standard 2.0m',type:'standard'},{x:bx+1,z:0,h:2,code:'AS-KS20',name:'Standard 2.0m',type:'standard'},
+   {x:bx,z:1,h:2,code:'AS-KS20',name:'Standard 2.0m',type:'standard'},{x:bx+1,z:1,h:2,code:'AS-KS20',name:'Standard 2.0m',type:'standard'},
+   {x:bx,z:0,h:0,y:2,dx:1,dz:0,code:'AS-KL170',name:'Ledger 1.7m',type:'ledger'},
+   {x:bx,z:1,h:0,y:2,dx:1,dz:0,code:'AS-KL170',name:'Ledger 1.7m',type:'ledger'},
+   {x:bx,z:0,h:0,y:2,dx:0,dz:1,code:'AS-KL170',name:'Ledger 1.7m',type:'ledger'},
+   {x:bx+1,z:0,h:0,y:2,dx:0,dz:1,code:'AS-KL170',name:'Ledger 1.7m',type:'ledger'},
+   {x:bx,z:0,h:0,y:2,dx:1,dz:0,code:'AS-KP240',name:'Steel Plank',type:'board'},
+   {x:bx,z:0,h:2,code:'AS-KDB240',name:'Diagonal Brace',type:'brace'}
+  ].forEach(o=>scene.push({sel:false,...o}));
+  renderScene();updValidation();
+}
+
+function delSel(){const i=scene.findIndex(o=>o.sel);if(i>=0){scene.splice(i,1);renderScene();}}
+
+// ─── TAKE-OFF ───
+const yardQty={'AS-KS20':108,'AS-KL170':62,'AS-KP240':55,'AS-KDB240':44,'AS-KS10':124,'AS-KS30':44};
+const wts={'AS-KS20':10.1,'AS-KL170':6.8,'AS-KP240':8.4,'AS-KDB240':7.9,'AS-KS10':5.5,'AS-KS30':14.6,'2617.200':9.3,'2601.157':5.5,'3883.157':10.5,'2683.157':8.2,'ST8SG':8.4,'ST13SG':12.8,'CRA19':1.4,'CSA19':1.6,'BP1SG':1.6};
+
+function updTakeoff(){
+  const counts={};
+  scene.forEach(o=>{counts[o.code]=(counts[o.code]||0)+1;});
+  const t=document.getElementById('toTable');
+  if(!t)return;
+  if(!Object.keys(counts).length){t.innerHTML='<div style="color:var(--slate2);font-size:12px;text-align:center;padding:20px 0">No components placed yet</div>';document.getElementById('toWeight').textContent='0 kg';return;}
+  let html='',tw=0;
+  Object.entries(counts).forEach(([code,qty])=>{
+    const w=(wts[code]||5)*qty;tw+=w;
+    const iy=yardQty[code];
+    const sf=iy!==undefined?Math.max(0,qty-iy):null;
+    html+=`<div class="to-row"><div><div class="to-code">${code}</div><div class="to-name">${scene.find(o=>o.code===code)?.name||''}</div></div><div style="font-weight:700;color:var(--navy)">×${qty}</div><div style="text-align:right;font-size:11px;color:var(--slate)">${w.toFixed(1)}kg${sf>0?`<br><span style="color:var(--red);font-weight:600">-${sf} short</span>`:''}</div></div>`;
+  });
+  t.innerHTML=html;
+  document.getElementById('toWeight').textContent=tw.toFixed(1)+' kg';
+}
+
+// ─── VALIDATION ───
+function updValidation(){
+  const el=document.getElementById('valItems');if(!el)return;
+  const res=[];
+  const hasBoard=scene.some(o=>o.type==='board');
+  const hasSafety=scene.some(o=>o.type==='safety');
+  const hasBrace=scene.some(o=>o.type==='brace');
+  const maxH=scene.filter(o=>o.type==='standard').reduce((m,o)=>Math.max(m,o.h),0);
+  if(hasBoard&&!hasSafety)res.push({s:'err',c:'AS/NZS 1576.1 Cl.3.10',m:'Platform boards present but no toe boards. Minimum 150mm toe board required on all open edges.'});
+  if(scene.length>2&&!hasBrace)res.push({s:'warn',c:'AS/NZS 1576.1 Cl.2.8',m:'No diagonal bracing detected. Bracing required for scaffold stability per AS/NZS 1576.'});
+  if(maxH>=4&&!hasSafety)res.push({s:'warn',c:'AS/NZS 1576.1 Cl.3.10',m:'Scaffold height ≥ 4m — edge protection guardrail (min 900mm) required on all open sides.'});
+  if(scene.length>0){
+    res.push({s:'ok',c:'AS/NZS 1576.1 Cl.3.7',m:'Platform width ≥ 450mm — compliant.'});
+    res.push({s:'ok',c:'AS/NZS 1576.1 Cl.2.5',m:'Duty rating HEAVY (4.5 kPa) — within design limits.'});
+  }
+  if(!res.length){el.innerHTML='<div style="color:var(--slate2);font-size:12px;text-align:center;padding:20px 0">Place components to validate</div>';return;}
+  el.innerHTML=res.map(r=>`<div class="val-item v-${r.s}"><div class="v-clause">${r.c}</div>${r.m}</div>`).join('');
+}
+
+function selRTab(el,id){
+  document.querySelectorAll('.r-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['to','val','props'].forEach(t=>document.getElementById('rt-'+t).style.display=t===id?'block':'none');
+}
+
+// ─── MAP ───
+let mapRot=0,mapH=12,mapHov=null;
+const buildings=[
+  {id:'A',x:110,y:160,w:200,h:130,sel:true,addr:'42 Collins Street',perim:142.4,area:842},
+  {id:'B',x:330,y:140,w:120,h:90,sel:false,addr:'40 Collins St',perim:88,area:360},
+  {id:'C',x:110,y:310,w:160,h:70,sel:false,addr:'44 Collins St',perim:76,area:380},
+  {id:'D',x:330,y:250,w:100,h:120,sel:false,addr:'38 Collins St',perim:68,area:320}
+];
+
+function openMap(){document.getElementById('mapModal').style.display='flex';setTimeout(initMap,50);}
+function closeMap(){document.getElementById('mapModal').style.display='none';}
+
+function initMap(){
+  const c=document.getElementById('mapCanvas');if(!c)return;
+  const p=c.parentElement;c.width=p.clientWidth;c.height=p.clientHeight;
+  c.onclick=onMapClick;c.onmousemove=onMapHov;drawMap();
+}
+
+function drawMap(){
+  const c=document.getElementById('mapCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.fillStyle='#d0d8e4';ctx.fillRect(0,0,W,H);
+  // streets
+  ctx.fillStyle='#bec8d4';
+  [[70,0,20,H],[310,0,20,H],[460,0,20,H],[0,130,W,15],[0,300,W,15],[0,430,W,15]].forEach(([x,y,w,h])=>{ctx.fillRect(x,y,w,h);});
+  ctx.fillStyle='#8899aa';ctx.font='10px Inter,sans-serif';
+  ctx.fillText('Collins St',340,126);ctx.fillText('Exhibition St',74,126);
+  // buildings
+  buildings.forEach(b=>{
+    const hov=mapHov===b.id,sel=b.sel;
+    ctx.fillStyle=sel?'rgba(30,42,56,0.55)':hov?'rgba(249,115,22,0.28)':'rgba(30,42,56,0.2)';
+    ctx.strokeStyle=sel||hov?'#F97316':'rgba(30,42,56,0.35)';
+    ctx.lineWidth=sel?2.5:1.5;
+    ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,2);ctx.fill();ctx.stroke();
+    ctx.fillStyle=sel?'rgba(249,115,22,0.95)':'rgba(30,42,56,0.55)';
+    ctx.font=(sel?'700':'400')+' 10px Inter,sans-serif';
+    ctx.fillText(b.addr,b.x+6,b.y+16);
+    if(sel){ctx.fillStyle='#F97316';ctx.beginPath();ctx.arc(b.x+b.w-10,b.y+10,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='white';ctx.beginPath();ctx.arc(b.x+b.w-10,b.y+10,2.5,0,Math.PI*2);ctx.fill();}
+  });
+}
+
+function onMapClick(e){
+  const c=document.getElementById('mapCanvas');
+  const r=c.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(c.width/r.width),my=(e.clientY-r.top)*(c.height/r.height);
+  let hit=null;buildings.forEach(b=>{if(mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h)hit=b;});
+  if(hit){
+    if(!e.shiftKey)buildings.forEach(b=>b.sel=false);
+    hit.sel=!hit.sel;
+    const s=buildings.find(b=>b.sel);
+    if(s){document.getElementById('mapAddrVal').textContent=s.addr;document.getElementById('mapPerim').textContent=s.perim;document.getElementById('mapArea').textContent=s.area;}
+    drawMap();
+  }
+}
+
+function onMapHov(e){
+  const c=document.getElementById('mapCanvas');
+  const r=c.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(c.width/r.width),my=(e.clientY-r.top)*(c.height/r.height);
+  let hit=null;buildings.forEach(b=>{if(mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h)hit=b.id;});
+  if(hit!==mapHov){mapHov=hit;drawMap();}
+  c.style.cursor=hit?'pointer':'crosshair';
+}
+
+function mapSearch(){
+  const v=document.getElementById('mapInput').value;
+  document.getElementById('mapAddrVal').textContent=v.split(',')[0];
+  document.getElementById('mapAddrSub').textContent=v.split(',').slice(1).join(',').trim()||'Australia';
+  buildings.forEach(b=>b.sel=false);buildings[0].sel=true;drawMap();
+}
+
+function updH(v){mapH=parseFloat(v);document.getElementById('hVal').textContent=mapH.toFixed(1)+'m';}
+function rotMap(d){mapRot=(mapRot+d)%360;document.getElementById('vpStatus').textContent='Building rotated '+mapRot+'° — snap to align';}
+function snapMap(){mapRot=Math.round(mapRot/45)*45;document.getElementById('vpStatus').textContent='Snapped to grid: '+mapRot+'°';}
+
+function importBuilding(){
+  const s=buildings.find(b=>b.sel);if(!s)return;
+  const sc=0.022;
+  importedBldg={h:mapH/4,fp:[[-s.w*sc,-s.h*sc],[s.w*sc,-s.h*sc],[s.w*sc,s.h*sc],[-s.w*sc,s.h*sc]]};
+  closeMap();renderScene();
+  document.getElementById('vpStatus').textContent='Imported: '+s.addr+' · '+s.perim+'m perimeter · '+mapH+'m height';
+}
+
+// ─── INIT ───
+window.addEventListener('resize',()=>{const p=document.querySelector('.page.active');if(p?.id==='p-designer')initCanvas();});
+setTimeout(()=>{addBay();updValidation();},200);
+</script>
+</body>
+</html>
